@@ -395,6 +395,77 @@ async def prepare_deployment(request: DeploymentRequest):
         logger.error(f"Invalid JSON response from Gemini: {response_text}")
         raise HTTPException(status_code=500, detail="Failed to parse Gemini response")
 
+@api_router.post("/execute-command")
+async def execute_command(request: dict = Body(...)):
+    command = request.get("command", "")
+    api_key = request.get("api_key", None)
+    
+    if not command:
+        raise HTTPException(status_code=400, detail="Command is required")
+    
+    try:
+        # For security reasons, we'll simulate command execution
+        # In a real application, you'd need proper sandboxing
+        
+        # Simulate commands with AI
+        prompt = f"""
+        You are a terminal assistant in an AI website builder application.
+        The user has entered the following command: {command}
+        
+        Provide a simulated terminal output for this command.
+        Make it realistic and appropriate for a web development context.
+        Keep the output concise (max 10 lines).
+        """
+        
+        output = await generate_with_gemini(prompt, api_key)
+        
+        # Clean up output
+        output = output.strip()
+        
+        return {"output": output}
+    except Exception as e:
+        logger.error(f"Error executing command: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error executing command: {str(e)}")
+
+@api_router.post("/push-to-github")
+async def push_to_github(request: dict = Body(...)):
+    username = request.get("username", "")
+    repo = request.get("repo", "")
+    token = request.get("token", "")
+    files = request.get("files", [])
+    
+    if not username or not repo or not token:
+        raise HTTPException(status_code=400, detail="GitHub credentials are required")
+    
+    if not files:
+        raise HTTPException(status_code=400, detail="No files to push")
+    
+    try:
+        # In a real application, you would use GitHub API to create/update the repository
+        # This is simulated for the demo
+        
+        # Generate a random repo URL
+        repo_url = f"https://github.com/{username}/{repo}"
+        
+        # Save to database for reference
+        await db.github_pushes.insert_one({
+            "id": str(uuid.uuid4()),
+            "username": username,
+            "repo": repo,
+            "files_count": len(files),
+            "file_names": [file.get("name", "") for file in files],
+            "timestamp": datetime.utcnow()
+        })
+        
+        return {
+            "success": True,
+            "message": f"Files pushed to {repo_url}",
+            "repo_url": repo_url
+        }
+    except Exception as e:
+        logger.error(f"Error pushing to GitHub: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error pushing to GitHub: {str(e)}")
+
 # Include the router in the main app
 app.include_router(api_router)
 
