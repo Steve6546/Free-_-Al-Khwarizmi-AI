@@ -698,25 +698,155 @@ button:disabled {
   }
 }
 
-/* Animation keyframes */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+/* Additional buttons */
+.additional-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
-@keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+.terminal-button, .github-button, .run-button {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius);
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--animation-speed);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.terminal-button {
+  background-color: var(--gray-700);
+  color: var(--gray-300);
+}
+
+.terminal-button:hover:not(:disabled) {
+  background-color: var(--gray-600);
+}
+
+.github-button {
+  background-color: #2b3137;
+  color: white;
+}
+
+.github-button:hover:not(:disabled) {
+  background-color: #3a414a;
+}
+
+.run-button {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.run-button:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+/* Terminal modal */
+.terminal-modal {
+  width: 100%;
+  max-width: 700px !important;
+}
+
+.terminal-container {
+  background-color: var(--gray-900);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  overflow: hidden;
+  font-family: 'Fira Code', monospace;
+  margin-bottom: 1rem;
+}
+
+.terminal-output {
+  height: 300px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+  color: var(--gray-300);
+  font-size: 0.9rem;
+}
+
+.terminal-line {
+  padding: 0.25rem 0;
+  word-break: break-word;
+}
+
+.terminal-line.command {
+  color: var(--gray-300);
+}
+
+.terminal-line.output {
+  color: var(--light-color);
+}
+
+.terminal-line.error {
+  color: var(--error-color);
+}
+
+.terminal-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--gray-800);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+}
+
+.terminal-input span {
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.terminal-input input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--light-color);
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+/* GitHub modal */
+.github-modal {
+  width: 100%;
+  max-width: 500px;
+}
+
+.github-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.input-group label {
+  font-size: 0.9rem;
+  color: var(--gray-400);
+}
+
+.input-group input {
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--gray-700);
+  background-color: var(--gray-800);
+  color: var(--light-color);
+  font-family: var(--font-family);
+  outline: none;
+}
+
+.input-group input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(58, 134, 255, 0.2);
 }
 
 /* Font for Arabic support */
