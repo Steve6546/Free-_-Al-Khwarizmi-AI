@@ -13,7 +13,7 @@ import "./App.css";
 const resources = {
   ar: {
     translation: {
-      "app-title": "مُنشئ المواقع الذكي",
+      "app-title": "الخوارزمي - منشئ المواقع الذكي",
       "app-description": "أدخل فكرة موقعك، ودع الذكاء الاصطناعي يبنيه لك",
       "idea-placeholder": "أدخل فكرة موقعك هنا... مثال: أريد موقع لعرض المنتجات الحرفية",
       "api-key-placeholder": "أدخل مفتاح API الخاص بك هنا...",
@@ -47,12 +47,17 @@ const resources = {
       "error-api-key": "مفتاح API مطلوب للمتابعة",
       "error-idea": "الرجاء إدخال فكرة الموقع للمتابعة",
       "loading": "جاري التحميل...",
-      "file-structure": "بنية الملفات"
+      "file-structure": "بنية الملفات",
+      "github-button": "ربط مع GitHub",
+      "github-push": "دفع إلى GitHub",
+      "terminal-title": "منفذ الأوامر",
+      "run-button": "تشغيل المشروع",
+      "settings-button": "الإعدادات"
     }
   },
   en: {
     translation: {
-      "app-title": "AI Website Builder",
+      "app-title": "Al-Khwarizmi AI Builder",
       "app-description": "Enter your website idea, and let AI build it for you",
       "idea-placeholder": "Enter your website idea here... Example: I want a website to showcase handmade products",
       "api-key-placeholder": "Enter your API key here...",
@@ -86,7 +91,12 @@ const resources = {
       "error-api-key": "API key is required to continue",
       "error-idea": "Please enter a website idea to continue",
       "loading": "Loading...",
-      "file-structure": "File Structure"
+      "file-structure": "File Structure",
+      "github-button": "Connect to GitHub",
+      "github-push": "Push to GitHub",
+      "terminal-title": "Command Terminal",
+      "run-button": "Run Project",
+      "settings-button": "Settings"
     }
   }
 };
