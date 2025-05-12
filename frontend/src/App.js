@@ -140,6 +140,201 @@ const agentStates = {
 const Agent = ({ type, name, description, status, isActive, isCompleted }) => {
   const { t } = useTranslation();
   
+  // Define specific animations based on agent type
+  const getAgentAnimation = () => {
+    if (!isActive) return {};
+    
+    switch(type) {
+      case 'thinker':
+        return {
+          scale: [1, 1.05, 1],
+          rotate: [0, -5, 5, 0],
+          filter: ["brightness(1)", "brightness(1.3)", "brightness(1)"]
+        };
+      case 'planner':
+        return {
+          scale: [1, 1.02, 1],
+          y: [0, -5, 0],
+          rotate: [0, 2, -2, 0]
+        };
+      case 'coder':
+        return {
+          scale: [1, 1.03, 1],
+          x: [0, 3, -3, 0],
+          filter: ["brightness(1)", "brightness(1.5)", "brightness(1)"]
+        };
+      case 'tester':
+        return {
+          scale: [1, 1.1, 1],
+          rotate: [0, 4, -4, 0],
+          y: [0, -3, 0]
+        };
+      case 'deployer':
+        return {
+          scale: [1, 1.2, 1],
+          y: [0, -8, 0],
+          filter: ["brightness(1)", "brightness(1.4)", "brightness(1)"]
+        };
+      default:
+        return {
+          scale: [1, 1.05, 1]
+        };
+    }
+  };
+  
+  // Define specific animation transitions based on agent type
+  const getAgentTransition = () => {
+    if (!isActive) return { duration: 0.5 };
+    
+    switch(type) {
+      case 'thinker':
+        return {
+          repeat: Infinity,
+          duration: 3,
+          ease: "easeInOut"
+        };
+      case 'planner':
+        return {
+          repeat: Infinity,
+          duration: 2.5,
+          ease: "easeInOut"
+        };
+      case 'coder':
+        return {
+          repeat: Infinity,
+          duration: 1.5,
+          ease: "linear"
+        };
+      case 'tester':
+        return {
+          repeat: Infinity,
+          duration: 2,
+          ease: "easeOut"
+        };
+      case 'deployer':
+        return {
+          repeat: Infinity,
+          duration: 2.2,
+          ease: "easeInOut"
+        };
+      default:
+        return {
+          repeat: Infinity,
+          duration: 3
+        };
+    }
+  };
+  
+  // Get agent-specific action content
+  const getAgentActionContent = () => {
+    if (!isActive) return null;
+    
+    switch(type) {
+      case 'thinker':
+        return (
+          <div className="agent-action-bubbles">
+            <motion.div 
+              className="thought-bubble"
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: [0, 1, 0], scale: [0.3, 1, 0.3], y: [-10, -30, -10] }}
+              transition={{ repeat: Infinity, duration: 3, delay: 0 }}
+            >
+              <span>?</span>
+            </motion.div>
+            <motion.div 
+              className="thought-bubble"
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: [0, 1, 0], scale: [0.3, 1, 0.3], y: [-10, -30, -10] }}
+              transition={{ repeat: Infinity, duration: 3, delay: 1 }}
+            >
+              <span>!</span>
+            </motion.div>
+            <motion.div 
+              className="thought-bubble"
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: [0, 1, 0], scale: [0.3, 1, 0.3], y: [-10, -30, -10] }}
+              transition={{ repeat: Infinity, duration: 3, delay: 2 }}
+            >
+              <span>✓</span>
+            </motion.div>
+          </div>
+        );
+      case 'planner':
+        return (
+          <div className="agent-action-content">
+            <motion.div
+              className="blueprint-paper"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 40 }}
+              transition={{ duration: 1 }}
+            >
+              <motion.div 
+                className="blueprint-lines"
+                initial={{ width: 0 }}
+                animate={{ width: ['0%', '100%', '70%', '90%', '80%'] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+              />
+            </motion.div>
+          </div>
+        );
+      case 'coder':
+        return (
+          <div className="agent-action-content">
+            <motion.div
+              className="code-screen"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <motion.div 
+                className="code-lines"
+                initial={{ height: 0 }}
+                animate={{ height: [0, 15, 0, 25, 10, 30] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+              />
+            </motion.div>
+          </div>
+        );
+      case 'tester':
+        return (
+          <div className="agent-action-content">
+            <motion.div
+              className="test-scanner"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 40 }}
+              transition={{ duration: 1 }}
+            >
+              <motion.div 
+                className="scan-line"
+                initial={{ top: 0 }}
+                animate={{ top: ['0%', '100%', '0%'] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              />
+            </motion.div>
+          </div>
+        );
+      case 'deployer':
+        return (
+          <div className="agent-action-content">
+            <motion.div
+              className="launch-button"
+              initial={{ scale: 0 }}
+              animate={{ scale: [0, 1.2, 1] }}
+              transition={{ duration: 1 }}
+            >
+              <motion.div 
+                className="launch-pulse"
+                animate={{ scale: [1, 1.5, 1], opacity: [0.8, 0, 0.8] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
+              />
+            </motion.div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+  
   return (
     <motion.div 
       className={`agent-card ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}
@@ -150,19 +345,14 @@ const Agent = ({ type, name, description, status, isActive, isCompleted }) => {
       <div className="agent-avatar">
         <motion.div
           className="agent-image-container"
-          animate={{ 
-            scale: isActive ? [1, 1.05, 1] : 1,
-            rotate: isActive ? [0, 2, -2, 0] : 0
-          }}
-          transition={{ 
-            repeat: isActive ? Infinity : 0, 
-            duration: isActive ? 3 : 0.5 
-          }}
+          animate={isActive ? getAgentAnimation() : {}}
+          transition={getAgentTransition()}
         >
           <img src={agentImages[type]} alt={t(name)} className="agent-image" />
           {isActive && (
             <div className="pulse-overlay"></div>
           )}
+          {getAgentActionContent()}
         </motion.div>
       </div>
       <div className="agent-info">
