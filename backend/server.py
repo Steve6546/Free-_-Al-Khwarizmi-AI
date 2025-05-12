@@ -92,7 +92,7 @@ def get_gemini_client(api_key=None):
         raise HTTPException(status_code=400, detail=f"Invalid API key or Gemini API error: {str(e)}")
 
 # Helper function to run Gemini model
-async def generate_with_gemini(prompt: str, api_key: str, model_name: str = "gemini-pro"):
+async def generate_with_gemini(prompt: str, api_key: str = None, model_name: str = "gemini-pro"):
     gemini = get_gemini_client(api_key)
     try:
         model = gemini.GenerativeModel(model_name)
