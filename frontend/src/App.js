@@ -122,11 +122,11 @@ const API = `${BACKEND_URL}/api`;
 
 // Agent images from Unsplash
 const agentImages = {
-  thinker: "https://images.unsplash.com/photo-1617791160536-598cf32026fb",
-  planner: "https://images.unsplash.com/photo-1532178324009-6b6adeca1741",
-  coder: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
-  tester: "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b",
-  deployer: "https://images.unsplash.com/photo-1597733336794-12d05021d510"
+  thinker: "https://images.unsplash.com/photo-1532178324009-6b6adeca1741",
+  planner: "https://images.unsplash.com/photo-1655393001768-d946c97d6fd1",
+  coder: "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b",
+  tester: "https://images.unsplash.com/photo-1597733336794-12d05021d510",
+  deployer: "https://images.unsplash.com/photo-1543955946-8d33e764d8f2"
 };
 
 // Agent animation states
