@@ -78,9 +78,14 @@ class DeploymentRequest(BaseModel):
     api_key: str
 
 # Gemini API integration
-def get_gemini_client(api_key: str):
+def get_gemini_client(api_key=None):
     try:
-        genai.configure(api_key=api_key)
+        # Use provided API key or fall back to environment variable
+        key_to_use = api_key or os.environ.get('GEMINI_API_KEY')
+        if not key_to_use:
+            raise ValueError("No API key provided or found in environment")
+        
+        genai.configure(api_key=key_to_use)
         return genai
     except Exception as e:
         logger.error(f"Failed to initialize Gemini: {str(e)}")
