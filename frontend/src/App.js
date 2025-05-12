@@ -453,6 +453,8 @@ const Home = () => {
   const [idea, setIdea] = useState("");
   const [apiKey, setApiKey] = useState(localStorage.getItem('geminiApiKey') || "");
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [showGithubModal, setShowGithubModal] = useState(false);
+  const [showTerminalModal, setShowTerminalModal] = useState(false);
   const [agentsStatus, setAgentsStatus] = useState({
     thinker: agentStates.WAITING,
     planner: agentStates.WAITING,
@@ -468,6 +470,11 @@ const Home = () => {
   const [error, setError] = useState(null);
   const [buildProgress, setBuildProgress] = useState(0);
   const [currentLanguage, setCurrentLanguage] = useState(i18n.language);
+  const [terminalCommand, setTerminalCommand] = useState("");
+  const [terminalOutput, setTerminalOutput] = useState([]);
+  const [githubUsername, setGithubUsername] = useState("");
+  const [githubRepo, setGithubRepo] = useState("");
+  const [githubToken, setGithubToken] = useState("");
   
   // API key handling
   const saveApiKey = () => {
@@ -512,6 +519,49 @@ const Home = () => {
         resolve();
       }, duration);
     });
+  };
+
+  // Execute terminal command
+  const executeCommand = async () => {
+    setTerminalOutput(prev => [...prev, { type: 'command', text: terminalCommand }]);
+    
+    try {
+      // In a real application, this would send the command to the backend
+      const response = await axios.post(`${API}/execute-command`, { 
+        command: terminalCommand,
+        api_key: apiKey
+      });
+      
+      setTerminalOutput(prev => [...prev, { type: 'output', text: response.data.output }]);
+    } catch (err) {
+      setTerminalOutput(prev => [...prev, { 
+        type: 'error', 
+        text: err.response?.data?.message || "Command execution failed" 
+      }]);
+    }
+    
+    setTerminalCommand("");
+  };
+  
+  // Push to GitHub
+  const pushToGithub = async () => {
+    if (!githubUsername || !githubRepo || !githubToken) {
+      setError("GitHub credentials are required");
+      return;
+    }
+    
+    try {
+      const response = await axios.post(`${API}/push-to-github`, {
+        username: githubUsername,
+        repo: githubRepo,
+        token: githubToken,
+        files: generatedFiles
+      });
+      
+      setShowGithubModal(false);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to push to GitHub");
+    }
   };
 
   // Start the build process
@@ -655,6 +705,29 @@ const Home = () => {
                 {t('reset-button')}
               </button>
             </div>
+            
+            <div className="additional-buttons">
+              <button 
+                className="terminal-button"
+                onClick={() => setShowTerminalModal(true)}
+              >
+                {t('terminal-title')}
+              </button>
+              <button 
+                className="github-button"
+                onClick={() => setShowGithubModal(true)}
+                disabled={generatedFiles.length === 0}
+              >
+                {t('github-button')}
+              </button>
+              <button 
+                className="run-button"
+                disabled={generatedFiles.length === 0}
+              >
+                {t('run-button')}
+              </button>
+            </div>
+            
             {error && <div className="error-message">{error}</div>}
           </div>
         </section>
@@ -769,6 +842,110 @@ const Home = () => {
                 </button>
                 <button onClick={saveApiKey} className="primary">
                   {t('api-key-button')}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* GitHub Modal */}
+        {showGithubModal && (
+          <motion.div 
+            className="modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div 
+              className="modal-content github-modal"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            >
+              <h2>{t('github-button')}</h2>
+              <div className="github-form">
+                <div className="input-group">
+                  <label>GitHub Username</label>
+                  <input 
+                    type="text" 
+                    value={githubUsername}
+                    onChange={(e) => setGithubUsername(e.target.value)}
+                    placeholder="username"
+                  />
+                </div>
+                <div className="input-group">
+                  <label>Repository Name</label>
+                  <input 
+                    type="text" 
+                    value={githubRepo}
+                    onChange={(e) => setGithubRepo(e.target.value)}
+                    placeholder="repository"
+                  />
+                </div>
+                <div className="input-group">
+                  <label>Personal Access Token</label>
+                  <input 
+                    type="password" 
+                    value={githubToken}
+                    onChange={(e) => setGithubToken(e.target.value)}
+                    placeholder="ghp_..."
+                  />
+                </div>
+              </div>
+              <div className="modal-buttons">
+                <button onClick={() => setShowGithubModal(false)}>
+                  {t('reset-button')}
+                </button>
+                <button onClick={pushToGithub} className="primary">
+                  {t('github-push')}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+        
+        {/* Terminal Modal */}
+        {showTerminalModal && (
+          <motion.div 
+            className="modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div 
+              className="modal-content terminal-modal"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            >
+              <h2>{t('terminal-title')}</h2>
+              <div className="terminal-container">
+                <div className="terminal-output">
+                  {terminalOutput.map((line, index) => (
+                    <div key={index} className={`terminal-line ${line.type}`}>
+                      {line.type === 'command' ? '$ ' : ''}{line.text}
+                    </div>
+                  ))}
+                </div>
+                <div className="terminal-input">
+                  <span>$</span>
+                  <input 
+                    type="text"
+                    value={terminalCommand}
+                    onChange={(e) => setTerminalCommand(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && executeCommand()}
+                    placeholder="Enter command..."
+                  />
+                </div>
+              </div>
+              <div className="modal-buttons">
+                <button onClick={() => setShowTerminalModal(false)}>
+                  {t('reset-button')}
+                </button>
+                <button onClick={executeCommand} className="primary">
+                  Execute
                 </button>
               </div>
             </motion.div>
